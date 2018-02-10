@@ -1,0 +1,18 @@
+{
+  "name": "andysgames",
+  "version": "1.0.0",
+  "description": "A website to host all my games",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Andy Buck",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/life4ants/andysgames"
+  },
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
