@@ -1,0 +1,52 @@
+
+body
+{
+background-color: #a74;
+background-position: center;
+background-repeat: no-repeat;
+background-image: url(match_images/board.jpg);
+width:800px;
+height: 580px;
+margin: auto;
+}
+
+img
+{
+    margin: 5px;
+}
+
+header
+{
+color: #eee;
+text-align:center;
+padding:5px;
+margin:15px;
+
+}
+
+#main
+{
+width: 565px;
+height: 350px;
+float: left;
+padding: 5px;
+
+}
+
+#sidebar
+{
+height:260px;
+width:100px;
+float:left;
+padding: 5px;
+
+}
+
+footer {
+background-color:black;
+color:white;
+text-align:center;
+clear:both;
+margin:10px;
+padding:5px; }
+
