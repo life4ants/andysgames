@@ -15,6 +15,5 @@ app.get('/matchgame', function (req, res) {
     res.sendFile(__dirname+'/pages/matchgame/index.html');
 });
 
-//app.use(express.static("pages"))
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
