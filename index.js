@@ -9,7 +9,7 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname+'/pages/index.html');
 });
 app.get('/aletterfromtheking', function (req, res) {
-    res.sendFile(__dirname+'/pages/ALFTKing/index.html');
+    res.sendFile(__dirname+'/pages/aletterfromtheking/index.html');
 });
 app.get('/matchgame', function (req, res) {
     res.sendFile(__dirname+'/pages/matchgame/index.html');
