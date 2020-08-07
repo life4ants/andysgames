@@ -1,0 +1,41 @@
+
+body{
+  background-color: green;
+}
+h1, h3 {
+  text-align: center;
+}
+#logo {
+  width: 250px;
+}
+img.tag {
+  height: 140px;
+  width: 250px;
+  border-radius: 10px;
+  margin: 15px;
+}
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.box {
+  padding: 10px;
+  background-color: #555;
+  border-radius: 10px;
+  margin: 20px;
+}
+.box p{
+  font-size: 20px;
+  text-align: center;
+  margin: 0px;
+}
+@media(min-width: 1000px){
+  h1{ font-size: 40px; }
+  #logo {width: 300px;}
+  img.tag {width: 300px; height: 168px;}
+  .box p {
+    font-size: 30px;
+  }
+}

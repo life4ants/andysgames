@@ -7,11 +7,13 @@ app.use(express.static('pages'))
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname+'/pages/home/index.html');
-    console.log(req.ip + " requested home page");
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(ip + " requested home page")
 });
+
 app.get('/matchgame', function (req, res) {
     res.sendFile(__dirname+'/pages/matchgame/index.html');
-    console.log(req.ip + " requested matchgame");
+    console.log("someone requested matchgame");
 });
 
 
