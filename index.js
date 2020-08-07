@@ -6,13 +6,12 @@ const app = express();
 app.use(express.static('pages'))
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname+'/pages/index.html');
-});
-app.get('/aletterfromtheking', function (req, res) {
-    res.sendFile(__dirname+'/pages/aletterfromtheking/index.html');
+    res.sendFile(__dirname+'/pages/home/index.html');
+    console.log(req.ip + " requested home page");
 });
 app.get('/matchgame', function (req, res) {
     res.sendFile(__dirname+'/pages/matchgame/index.html');
+    console.log(req.ip + " requested matchgame");
 });
 
 

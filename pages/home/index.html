@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Andy's Games</title>
+    <link rel="shortcut icon" href="home/favicon.ico" type="image/x-icon">
+    <style type="text/css">
+      body{
+        background-color: green;
+      }
+      h1, h3 {
+        text-align: center;
+      }
+      #logo {
+        width: 250px;
+      }
+      img.tag {
+        height: 140px;
+        width: 250px;
+        border-radius: 10px;
+        margin: 15px;
+      }
+      .wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-bottom: 30px;
+      }
+
+      @media(min-width: 1000px){
+        h1{ font-size: 40px; }
+        #logo {width: 300px;}
+        img.tag {width: 300px; height: 168px;}
+      }
+    </style>
+  </head>
+<body>
+  <div class="wrapper">
+    <img id="logo" src="/home/logo.png">
+    <h1>Home of Andy Buck's games</h1>
+  </div>
+  <div class="wrapper">
+    <a href="http://www.andrewdbuck.com/conquest">
+      <img class="tag" src="/home/conquest.jpg">
+    </a>
+    <a href="http://www.andrewdbuck.com/invasion-vue">
+      <img class="tag" src="/home/invasion-vue.jpg">
+    </a>
+    <a href="matchgame">
+      <img class="tag" src="/home/matchgame.jpg">
+    </a>
+    <a href="http://www.andrewdbuck.com/wemoexplorer">
+      <img class="tag" src="/home/wemo.png">
+    </a>
+  </div>
+</body>
+</html>
