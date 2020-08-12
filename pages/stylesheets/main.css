@@ -27,6 +27,7 @@ body{
   .title {font-size: 42px;}
 }
 @media(min-width: 1200px){
+  #logo {width: 160px;}
   .title {font-size: 60px;}
 }
 
