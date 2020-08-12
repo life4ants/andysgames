@@ -45,6 +45,9 @@ body{
   flex-grow: 1;
 }
 
+
+/*unique to the home page: */
+
 img.tag {
   height: 140px;
   width: 250px;

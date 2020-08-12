@@ -13,8 +13,16 @@ app.get('/', function (req, res) {
 
 app.get('/matchgame', function (req, res) {
     res.sendFile(__dirname+'/pages/matchgame/index.html');
-    console.log("someone requested matchgame");
+	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(ip + " requested matchgame");
 });
+
+app.get('/wemoexplorer', function (req, res) {
+    res.sendFile(__dirname+'/pages/wemo/wemo.html');
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(ip+" requested wemo");
+});
+
 
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
