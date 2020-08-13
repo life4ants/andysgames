@@ -3,9 +3,9 @@
   <head>
     <title>Wemo Explorer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="shortcut icon" href="wemo/imgs/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="../stylesheets/main.css">
-    <link rel="stylesheet" type="text/css" href="../stylesheets/skeleton.css">
+    <link rel="shortcut icon" href="images/wemo.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/skeleton.css">
   </head>
 <body>
   <div class="title_bar">
@@ -14,9 +14,23 @@
         <img id="logo" src="/images/logo.png">
       </a>
     </div>
-    <div class="title_box">
+    <div class="title_box cover">
       <h1 class="title">Wemo Explorer</h1>
     </div>
   </div>
+  <br>
+  <button class="button-primary space"
+    onclick = "window.location.href='http://andrewdbuck.com/wemoexplorer';" 
+  >Play version one</button>
+  <br>
+  <button class="button-primary space"
+    onclick="document.getElementById('msg').innerHTML='Sorry, not available yet!';">
+    Play version two
+  </button>
+  <div id="msg"></div>
+  <br>
+  <button class="button-primary space">
+    Build your own worlds
+  </button>
 </body>
 </html>

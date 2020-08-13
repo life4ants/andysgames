@@ -34,14 +34,14 @@ body{
 
 .title_bar {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   background-color: #777;
   border-radius: 20px;
   padding: 5px;
 }
 
 .title_box {
-  padding: 0px 20px;
+  margin: 0px 20px;
   flex-grow: 1;
 }
 
@@ -76,4 +76,24 @@ img.tag {
   .box p {
     font-size: 30px;
   }
+}
+
+/*unique in wemo page:*/
+
+.cover {
+  background-image: url("/images/wemo_cover.png");
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-shadow: 2px 3px 3px #eee;
+  color: #111;
+}
+
+.space {
+  margin: 5px;
+}
+
+#msg {
+  display: inline;
 }
