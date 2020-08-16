@@ -25,4 +25,4 @@ app.get('/wemoexplorer', function (req, res) {
 
 
 
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+app.listen(PORT, () => console.log(`${new Date().toLocaleTimeString()}: Listening on ${ PORT }`))

@@ -6,31 +6,45 @@
     <link rel="shortcut icon" href="images/wemo.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/skeleton.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/wemo.css">
   </head>
 <body>
-  <div class="title_bar">
-    <div class="logo_box">
-      <a href="/">
-        <img id="logo" src="/images/logo.png">
-      </a>
-    </div>
-    <div class="title_box cover">
-      <h1 class="title">Wemo Explorer</h1>
+  <!-- Everything here in Div#topbar shows while loading, then is 
+  replaced with the html from the Vue template. -->
+  <div id="topbar">
+    <div class="title_bar">
+      <div class="logo_box">
+        <a href="/">
+          <img id="logo" src="/images/logo.png">
+        </a>
+      </div>
+      <div class="title_box cover">
+        <h1 class="title">Wemo Explorer</h1>
+      </div>
     </div>
   </div>
-  <br>
-  <button class="button-primary space"
-    onclick = "window.location.href='http://andrewdbuck.com/wemoexplorer';" 
-  >Play version one</button>
-  <br>
-  <button class="button-primary space"
-    onclick="document.getElementById('msg').innerHTML='Sorry, not available yet!';">
-    Play version two
-  </button>
-  <div id="msg"></div>
-  <br>
-  <button class="button-primary space">
-    Build your own worlds
-  </button>
+  <!-- end topbar -->
+  <div class="wrapper">
+    <button class="button-primary space"
+      onclick = "window.location.href='http://andrewdbuck.com/wemoexplorer';" 
+    >Play version one</button>
+    <button class="button-primary space"
+      onclick="alert('Sorry, not available yet!');">
+      Play version two
+    </button>
+    <button class="button-primary space">
+      Build your own worlds
+    </button>
+  </div>
+  <div id="game"></div>
+  <div id="board"></div>
+  <div id="popup"></div>
 </body>
+  <script src="wemo/lib/vue2.2.10.js"></script>
+  <script src="wemo/lib/p5.min.js"></script>
+  <script src="wemo/scripts/main.js"></script>
+  <script src="wemo/scripts/Vtopbar.js"></script>
+  <script src="wemo/scripts/cell.js"></script>
+  <script src="wemo/scripts/drawer.js"></script>
+
 </html>
