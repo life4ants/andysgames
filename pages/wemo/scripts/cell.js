@@ -1,15 +1,15 @@
 class Cell {
-  constructor(type){
-    this.L1 = type || "saltwater" //ground
-    this.L2 = null                //overlapping ground - beach, mountains, etc
-    this.L3 = null                //growing things - trees, long grass, etc
-    this.L4 = null                //piles of dropped items
-    this.L5 = null                //clouds
-    this.byPit = false
-    this.quantity = 0
+  constructor(ar){
+    this.L1 = GtileList[ar[0]]       || "saltwater"  //ground
+    this.L2 = GtileList[ar[1]]       || null         //overlapping ground - beach, mountains, etc
+    this.L3 = GtileList[ar[2]]       || null         //growing things - trees, long grass, etc
+    this.L4 = GtileList[ar[3]]       || null         //piles of dropped items
+    this.L5 = GtileList[ar[4]]       || null         //clouds
+    this.byPit = GtileList[ar[5]]    || false
+    this.quantity = GtileList[ar[6]] || 0
   }
 
-  show(gx,gy){
+  display(gx,gy){
     if (this.L5 === "clouds" && game.mode === "play"){
       drawer.image("clouds", gx, gy)
       return
@@ -25,6 +25,16 @@ class Cell {
     }
     if (this.byPit)
       drawer.ring(gx,gy)
+  }
+
+  export(){
+    function num(x){
+      return GtileList.findIndex((e) => e === x )
+    }
+
+    return [num(this.L1), num(this.L2), 
+            num(this.L3), num(this.L4), num(this.L5), 
+            this.byPit, this.quantity]
   }
 
 }

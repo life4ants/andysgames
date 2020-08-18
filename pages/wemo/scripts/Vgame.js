@@ -1,17 +1,14 @@
 var game = new Vue({
   el: '#game',
   template: `
-    <div id="foo">
+    <div id="game">
       <div v-if="mode === 'play' && isMobile">
         <div class="rightButton" @click="() => moveAction(0)"></div>
         <div class="leftButton" @click="() => moveAction(1)"></div>
         <div class="upButton" @click="() => moveAction(2)"></div>
         <div class="downButton" @click="() => moveAction(3)"></div>
       </div>
-      <welcome-menu v-if="mode === 'welcome'" :startGame="startGame"
-        :player="currentPlayer" :edit="edit"></welcome-menu>
-      <edit-bar v-else-if="mode === 'edit'" :exit="exit"></edit-bar>
-      <div v-else-if="mode === 'loading'"></div>
+      <edit-bar v-if="mode === 'edit'" :exit="exit"></edit-bar>
       <div v-else-if="mode === 'play'" class="sidebar">
         <div class="sidebar-content">
           <i class="fa fa-sign-out fa-flip-horizontal fa-2x" aria-hidden="true" @click="exit" title="Exit Game"></i>
@@ -24,7 +21,7 @@ var game = new Vue({
           <i class="fa fa-info-circle fa-2x" aria-hidden="true" @click="() => infoShown = !infoShown" title="Show Info"></i>
         </div>
       </div>
-      <div v-else class="sidebar" style="width: 150px">
+      <div v-else-if = "mode === 'build'" class="sidebar" style="width: 150px">
         <div class="sidebar-content">
           <h5 style="text-decoration: underline">Build Mode</h5>
           <h6>Rules:</h6>
@@ -44,20 +41,19 @@ var game = new Vue({
     </div>
     `,
   components: {
-    'welcome-menu': welcome,
-    'edit-bar': editBar
+    'edit-bar': topbar
   },
   data: {
     icons: [
       {code: "B", active: false, selected: false, id: "build", src: "images/build.png", title: "Build (B)"},
-      {code: "D", active: false, selected: false, id: "dump", src: "images/dump.png", title: "Dump (D)"},
-      {code: "G", active: false, selected: false, id: "grab", src: "images/grab.png", title: "Grab/Gather (G)"},
-      {code: "F", active: false, selected: false, id: "feedFire", src: "images/feedFire.png", title: "Feed Fire (F)"},
-      {code: "E", active: false, selected: false, id: "eat", src: "images/eat.png", title: "Eat (E)"},
-      {code: "J", active: false, selected: false, id: "jump", src: "images/jump.png", title: "Jump in or out of Canoe (J)"},
       {code: "C", active: false, selected: false, id: "chop", src: "images/chop.png", title: "Chop down Tree (C)"},
-      {code: "G", active: false, selected: false, id: "pick", src: "images/pick.png", title: "Gather Berries (G)"},
+      {code: "D", active: false, selected: false, id: "dump", src: "images/dump.png", title: "Dump (D)"},
+      {code: "E", active: false, selected: false, id: "eat", src: "images/eat.png", title: "Eat (E)"},
+      {code: "F", active: false, selected: false, id: "feedFire", src: "images/feedFire.png", title: "Feed Fire (F)"},
       {code: "F", active: false, selected: false, id: "fling", src: "images/fling.png", title: "Fling (F)"},
+      {code: "G", active: false, selected: false, id: "grab", src: "images/grab.png", title: "Grab/Gather (G)"},
+      {code: "G", active: false, selected: false, id: "pick", src: "images/pick.png", title: "Gather Berries (G)"},
+      {code: "J", active: false, selected: false, id: "jump", src: "images/jump.png", title: "Jump in or out of Canoe (J)"},
       {code: "S", active: false, selected: false, id: "sleep", src: "images/sleepIcon.png", title: "Go to Sleep (S)"},
       {code: "S", active: false, selected: false, id: "wake", src: "images/wakeUp.png", title: "Wake up (S)"}
     ],
@@ -69,32 +65,15 @@ var game = new Vue({
     level: 1,
     currentPlayer: {}
   },
-  mounted(){
-    if (!localStorage.wemoUpToDate || localStorage.wemoUpToDate !== "8pmDec122017"){
-      let s = Object.keys(localStorage)
-      for (let i = 0; i < s.length; i++){
-        if (s[i].substr(0,8) === "wemoGame"){
-          delete localStorage[s[i]]
-        }
-      }
-      let players = JSON.parse(localStorage.wemoPlayers || "[]")
-      let newPlayers = []
-      for (let i=0; i<players.length; i++){
-        newPlayers.push({name: players[i].name, unlockedLevel: 1, games: [], character: 0})
-      }
-      localStorage.setItem("wemoPlayers", JSON.stringify(newPlayers))
-      localStorage.setItem("wemoUpToDate", "8pmDec122017")
-    }
-  },
   computed: {
     buildType(){
-      if (builder.item.name){
-        switch(builder.item.name){
-          case "raft": return "A Raft"
-          case "steppingStones": return "Stepping Stones"
-          case "campsite": return "A Campsite"
-        }
-      }
+      // if (builder.item.name){
+      //   switch(builder.item.name){
+      //     case "raft": return "A Raft"
+      //     case "steppingStones": return "Stepping Stones"
+      //     case "campsite": return "A Campsite"
+      //   }
+      // }
       return ""
     },
     isMobile(){
@@ -112,13 +91,13 @@ var game = new Vue({
           case "B": popup.buildMenu();    break;
           case "C": actions.chop();       break;
           case "D":
-            if (board.cells[active.x][active.y].type === "campsite"){ popup.dropMenu() }
+            if (cells[active.x][active.y].type === "campsite"){ popup.dropMenu() }
             else { popup.dumpMenu() }
             break
           case "E": actions.eat();        break;
           case "F": actions.fling();      break;
           case "G":
-            if (board.cells[active.x][active.y].type === "campsite"){ popup.grabMenu("grab") }
+            if (cells[active.x][active.y].type === "campsite"){ popup.grabMenu("grab") }
             else { actions.grab() }
             break
           case "J": man.dismount();       break;
@@ -150,7 +129,7 @@ var game = new Vue({
         this.icons[10].active = man.isSleeping
       }
       else {
-        let cell = board.cells[man.x][man.y]
+        let cell = cells[man.x][man.y]
         //build:
         this.icons[0].active = active === man
         //dump:
@@ -167,7 +146,7 @@ var game = new Vue({
               (basket && cell.type !== "berryTree" && basket.includesItems(["berries", "veggies"]).length > 0 )
         //jump:
         this.icons[5].active = (man.isRiding && (active.landed || active.isBeside("dock") ||
-              "river" === board.cells[active.x][active.y].type)) ||  (!man.isRiding && vehicles.canMount(man.x, man.y))
+              "river" === cells[active.x][active.y].type)) ||  (!man.isRiding && vehicles.canMount(man.x, man.y))
         //chop:
         this.icons[6].active = ["tree", "treeShore", "treeThin"].includes(cell.type)
         //pick:
@@ -209,16 +188,20 @@ var game = new Vue({
       redraw()
     },
 
-    edit(player){
-      world.topOffset = 100
-      $("#board").css("top", world.topOffset+"px").css("left", "0px")
-      let cols = min(floor(window.innerWidth/25), 40)
-      let rows = min(floor(window.innerHeight/25), 25)
-      editor.newWorld(cols, rows, "random")
-      this.currentPlayer = player
+    edit(){
+      $("#board").css("top", "100px").css("left", "0px")
+      $(".welcome").css("display", "none")
+      let cols = min(floor(window.innerWidth/TILESIZE), 40)
+      let rows = min(floor(window.innerHeight/TILESIZE), 25)
+      this.resize(cols, rows)
+      Goffset = 0
+      board = new Board(cols, rows)
       this.mode = "edit"
-      this.started = true
       loop()
+    },
+
+    resize(cols, rows){
+      resizeCanvas(cols*TILESIZE, rows*TILESIZE+Goffset)
     },
 
     startGame(type, player, index){

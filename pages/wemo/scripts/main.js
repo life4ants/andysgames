@@ -1,31 +1,59 @@
-console.time("main")
+console.timeLog("main", "loading main")
 const TILESIZE = 32
-var G_offset = 55 //height of topbar except in edit mode, then 0
-var loaded = false
-var G_tiles = {}
+var Goffset = 55 //height of topbar except in edit mode, then 0\
+var GtileList = [
+  null,
+  "bedrock", 
+  "dirt", 
+  "freshwater", 
+  "grass",
+  "hill1", 
+  "hill2", 
+  "hill3",
+  "hill4", 
+  "hill5", 
+  "hill6",
+  "hill7", 
+  "hill8", 
+  "hill9",
+  "hill10", 
+  "hill11", 
+  "hill12",
+  "hill13", 
+  "hill14", 
+  "hill15",
+  "saltwater", 
+  "sand"      
+  ]
+var Gsounds = {
+  "chop":    null, "eat":     null, "dig":      null,
+  "pit":     null, "sleep":   null, "vomit":    null,
+  "walk1":   null, "walk2":   null
+}
+var Gtiles = {}
+var cells = []
 
 async function loader(){
-  G_tiles = {
-    dirt:       await loadImage("wemo/img_tiles/dirt.png"),
-    freshwater: await loadImage("wemo/img_tiles/freshwater.png"),
-    grass:      await loadImage("wemo/img_tiles/grass.png"),
-    hill1:      await loadImage("wemo/img_tiles/hill1.png"),
-    hill2:      await loadImage("wemo/img_tiles/hill2.png"),
-    hill3:      await loadImage("wemo/img_tiles/hill3.png"),
-    hill4:      await loadImage("wemo/img_tiles/hill4.png"),
-    hill5:      await loadImage("wemo/img_tiles/hill5.png"),
-		//sand:       await loadImage("wemo/img_tiles/sand.png"),
-    saltwater:  await loadImage("wemo/img_tiles/saltwater.png")
+  var c = 1
+  for (let i = 1; i<GtileList.length; i++){
+    Gtiles[GtileList[i]] = await loadImage(`wemo/img_tiles/${GtileList[i]}.png`)
+    // console.timeLog("main", c++)
 	}
-  loaded = true
+  for (const i in Gsounds){
+    Gsounds[i] = await new Audio(`wemo/sounds/${i}.mp3`)
+    // console.timeLog("main", c++)
+  }
+  resizeCanvas(500,500)
+  Gcanvas.parent("board")
   console.timeEnd("main")
+  game.mode = "welcome"
 }
 
 function setup(){
   console.timeLog("main", "setup started")
   loader()
-  let cvs = createCanvas(window.innerWidth, window.innerHeight)
-  cvs.parent("board")
+  Gcanvas = createCanvas(200,30)
+  Gcanvas.parent("loading")
   // $("#board").css("top", world.topOffset).css("left", world.leftOffset)
   strokeJoin(ROUND)
   // noLoop()
@@ -33,12 +61,21 @@ function setup(){
 }
 
 function draw(){
-  if (loaded){
-    background('green')
-    image(G_tiles.dirt, 200,200)
-  }
-  else {
+  if (game.mode === "loading"){
     background('purple')
-    text("loading song", 200,200)
+    text("loading song", 10,10)
+  }
+  else if (game.mode === "welcome"){
+    background("green")
+    text("ready to play!", 50,10)
+  }
+  else if (game.mode === "edit") {
+    background('green')
+    board.display()
   }
 }
+
+$("#board").contextmenu(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+});

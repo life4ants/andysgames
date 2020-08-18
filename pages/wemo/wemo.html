@@ -7,11 +7,14 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/skeleton.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/wemo.css">
+    <script type="text/javascript">
+      console.time("main")
+    </script>
   </head>
 <body>
   <!-- Everything here in Div#topbar shows while loading, then is 
   replaced with the html from the Vue template. -->
-  <div id="topbar">
+  <div class="welcome">
     <div class="title_bar">
       <div class="logo_box">
         <a href="/">
@@ -24,17 +27,34 @@
     </div>
   </div>
   <!-- end topbar -->
-  <div class="wrapper">
+  <div class="welcome welcome-text">
+    <div>
+      <h4>About Wemo</h4>
+      <p>Wemo was concived in 2017, and has evolved a lot from the original idea. I worked on it for about 4 months and then set it aside. Now in August 2020 I am attempting to finish some of the ideas we had for it all along.</p>
+      <h5>How to Play</h5>
+      <p>Use the arrow keys to move the man around and uncover the world.</p>
+      <p>Use the following keys to do specific actions:</p>
+      <ul>
+        <li>B: open the build menu</li>
+        <li>C: chop down a tree</li>
+        <li>D: drop an item from your backpack</li>
+        <li>E: eat a berry from a berry tree or your basket</li>
+        <li>F: feed a fire or add to a construction site</li>
+        <li>G: pick up an item or pick berries into your basket</li>
+        <li>J: jump onto or off of your raft</li>
+        <li>K: open the cook menu</li>
+        <li>S: go to sleep or wake up</li>
+        <li>X: center the screen on the man</li>
+      </ul>
+    </div>
     <button class="button-primary space"
       onclick = "window.location.href='http://andrewdbuck.com/wemoexplorer';" 
     >Play version one</button>
     <button class="button-primary space"
-      onclick="alert('Sorry, not available yet!');">
-      Play version two
-    </button>
-    <button class="button-primary space">
+      onclick="game.edit()">
       Build your own worlds
     </button>
+    <div id="loading"></div>
   </div>
   <div id="game"></div>
   <div id="board"></div>
@@ -42,9 +62,15 @@
 </body>
   <script src="wemo/lib/vue2.2.10.js"></script>
   <script src="wemo/lib/p5.min.js"></script>
-  <script src="wemo/scripts/main.js"></script>
+  <script src="wemo/lib/jquery-3.1.1.min.js"></script>
   <script src="wemo/scripts/Vtopbar.js"></script>
+  <script src="wemo/scripts/Vgame.js"></script>
+  <script src="wemo/scripts/main.js"></script>
   <script src="wemo/scripts/cell.js"></script>
   <script src="wemo/scripts/drawer.js"></script>
+  <script src="wemo/scripts/editor.js"></script>
+  <script src="wemo/scripts/viewport.js"></script>
+  <script src="wemo/scripts/board.js"></script>
+  <script src="wemo/scripts/keyPress.js"></script>
 
 </html>

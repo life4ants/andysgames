@@ -14,20 +14,16 @@ body {
   position: absolute;
 }
 
-#p5_loading {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  color: #444;
-  font-size: 20px;
-  padding: 5px 15px;
-  border-radius: 10px;
-  background-color: #ffe;
+.welcome-text {
+  columns: 200px 3;
+  padding: 15px;
+}
+.welcome-text ul{
+  margin: 10px;
+  list-style: none;
 }
         /* ----------------------- Sidebar/Topbar: --------------------*/
-     /*   
+        
 .topbar {
   position: fixed;
   top: 0;
@@ -36,7 +32,7 @@ body {
   width: 100%;
   background-color: #e0ffe0;
   z-index: 1;
-}*/
+}
 
 .sidebar {
   position: fixed;

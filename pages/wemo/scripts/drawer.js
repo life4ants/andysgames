@@ -6,13 +6,16 @@ var drawer = {
     ellipseMode(CENTER)
     let s = TILESIZE-2
     let h = TILESIZE/2
-    ellipse(gx*TILESIZE+h, gy*TILESIZE+G_offset+h,s,s)
+    ellipse(gx*TILESIZE+h, gy*TILESIZE+Goffset+h,s,s)
   },
 
   image(tile, gx, gy){
     if (tile){
-      try {image(G_tiles[tile], gx*TILESIZE, gy*TILESIZE+G_offset)}
-      catch {console.error(`can't draw tile ${tile} at ${gx}, ${gy}!`)}
+      image(Gtiles[tile], gx*TILESIZE, gy*TILESIZE+Goffset)
+      // catch {
+      //   console.error(`can't draw tile ${tile} at ${gx}, ${gy}!`)
+      //   noLoop()
+      // }
     }      
   },
 
