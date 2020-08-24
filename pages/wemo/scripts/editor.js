@@ -1,61 +1,101 @@
 let editor = {
   path: [],
   tile: "saltwater",
+  tool: "brush",
   auto: false,
+  layer: 'L1',
 
   mousePressed(){
+    this.mouseAction(true)
+  },
+
+  mouseDragged(){
+    this.mouseAction(false)
+  },
+
+  mouseReleased(){
+    if (this.auto && this.tool === "brush")
+      this.parsePath(this.tile)
+  },
+
+  mouseAction(press){ // false = dragged, true = pressed
     let x = Math.floor(mouseX/TILESIZE)
     let y = Math.floor(mouseY/TILESIZE)
     let id = x+"_"+y
     if (mouseButton === LEFT){
       if (this.auto){
-        this.path = [id]
-        this.changeTile(x,y, "cross", "cross")
+        switch (this.tool){
+          case "brush":
+            if (press)
+              this.path = [id]
+            else if (!press && !this.path.includes(id)){
+              this.path.push(id)
+            }
+            this.changeTile(x,y, "cross")
+            return
+          case "eraser":
+            this.erase(x,y); return
+          default: return
+        }
       }
-      else
-        this.changeTile(x,y)
+      else { 
+        switch(this.tool){
+          case "brush": 
+              this.changeTile(x,y,this.tile)
+            return
+          case "floodFill":
+            this.floodFill(x, y, cells[x][y][this.layer], this.tile)
+            return
+          case "eraser":
+            this.erase(x,y)
+            return
+        }
+      }
+    }
+    else {
+      if (press){
+        if (this.tool === "floodFill") {
+          let T = this.layer === 'L1' ? 'saltwater' : null
+          this.floodFill(x, y, cells[x][y][this.layer], T)
+        }
+        else
+          board.clicker()
+      }
     }
   },
+  
+  erase(x,y){
+    if (this.layer === 'L1')
+      this.changeTile(x,y, 'saltwater')
+    else
+      this.changeTile(x,y, null)
+  },
 
-  mouseDragged(){
-    let x = Math.floor(mouseX/TILESIZE)
-    let y = Math.floor(mouseY/TILESIZE)
-    let id = x+"_"+y
-    if (this.auto){
-      if (!this.path.includes(id)){
-        this.changeTile(x,y, "cross", "cross")
-        this.path.push(id)
-      }
+  showMouse(){
+    if (this.tool === "brush"){
+      image(Gtiles[this.auto ? this.tile + "X" : this.tile], mouseX-15, mouseY-15, 30,30)
+      rectMode(CENTER)
+      stroke(0)
+      strokeWeight(2)
+      noFill()
+      rect(mouseX,mouseY, 32, 32)
     }
     else
-      this.changeTile(x,y)
+      image(Gtiles[this.tool], mouseX-13, mouseY-13, 26,26)
   },
 
-  mouseReleased(){
-    if (mouseButton === RIGHT && !this.auto){
-      let x = Math.floor(mouseX/25)
-      let y = Math.floor(mouseY/25)
-      let id = x+"_"+y
-      if (confirm("are you sure you want to flood fill?")){
-        let cell = cells[x][y]
-        this.floodFill(x, y, cell.tile, cell.type, this.tile, this.type)
-      }
-    }
-    else if (this.auto)
-      this.parsePath(this.tile)
+  changeTile(x,y, tile){
+    cells[x][y][this.layer] = tile
   },
 
-  changeTile(x,y){
-      cells[x][y][this.layer] = this.tile
-  },
-
-  floodFill(x,y, tile1, type1, tile2, type2){
-    this.changeTile(x,y,tile2, type2)
+  floodFill(x,y, tile1, tile2){
+    this.changeTile(x,y,tile2)
     
     for (let i = x-1; i <= x+1; i++){
       for (let j = y-1; j <= y+1; j++){
-        if (i >= 0 && i < board.cols && j >= 0 && j < board.rows && cells[i][j].type === type1)
-          this.floodFill(i,j, tile1, type1, tile2, type2)
+        if (i >= 0 && i < board.cols && j >= 0 && j < board.rows && 
+                  cells[i][j][this.layer] === tile1)
+          this.floodFill(i,j, tile1, tile2)
       }
     }
   },
@@ -89,7 +129,7 @@ let editor = {
         let x = Number(ar[0])
         let y = Number(ar[1])
 
-        this.changeTile(x,y, type+tiles[i], type)
+        this.changeTile(x,y, type+tiles[i])
       }
     }
     this.path = []

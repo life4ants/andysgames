@@ -41,7 +41,7 @@ var game = new Vue({
     </div>
     `,
   components: {
-    'edit-bar': topbar
+    'edit-bar': editbar
   },
   data: {
     icons: [
@@ -162,41 +162,23 @@ var game = new Vue({
     },
 
     exit() {
-      if (this.mode === "play" && !board.gameOver)
-        this.saveGame()
-      else if (board.gameOver){
-        let index = this.currentPlayer.games.findIndex((e) => e.name === board.name)
-        if (index !== -1){
-          let gameId = this.currentPlayer.games[index].id
-          localStorage.removeItem("wemoGame"+gameId)
-          this.currentPlayer.games.splice(index,1)
-          let p = JSON.parse(localStorage.wemoPlayers)
-          p[this.currentPlayer.index] = this.currentPlayer
-          localStorage.setItem("wemoPlayers", JSON.stringify(p))
-        }
-      }
+      Goffset = 0
+      $(".welcome").css("display", "block")
+      $("#board").css("position", "static")
       this.mode = "welcome"
-      $("body").removeClass("full-screen")
       noLoop()
-      this.started = false
-      this.paused = false
-      sounds.files['sleep'].pause()
-      popup.show = false
-      world.topOffset = 0
-      $("#board").css("top", world.topOffset+"px").css("left", world.leftOffset)
-      $(window).scrollTop(0).scrollLeft(0)
-      redraw()
+
     },
 
     edit(){
-      $("#board").css("top", "100px").css("left", "0px")
-      $(".welcome").css("display", "none")
-      let cols = min(floor(window.innerWidth/TILESIZE), 40)
-      let rows = min(floor(window.innerHeight/TILESIZE), 25)
-      this.resize(cols, rows)
-      Goffset = 0
-      board = new Board(cols, rows)
+      let c = min(floor(window.innerWidth/TILESIZE), 40)
+      let r = min(floor(window.innerHeight/TILESIZE), 25)
+      this.resize(c,r)
+      board = new Board(c,r) //global
       this.mode = "edit"
+      $("#board").css("top", "0px").css("left", "100px").css("position", "absolute")
+      $(".welcome").css("display", "none")
+      $("#defaultCanvas0").css("cursor", "none")
       loop()
     },
 

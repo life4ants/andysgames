@@ -41,14 +41,14 @@ function mouseDragged(){
     editor.mouseDragged()
 }
 
-// function mouseReleased(){
-//   if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height)
-//     return
-//   if (game.mode === "edit" && winMouseY > world.topOffset)
-//     editor.mouseReleased()
-// }
+function mouseReleased(){
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height)
+    return
+  if (game.mode === "edit" && winMouseY > viewport.top)
+    editor.mouseReleased()
+}
 
-// function windowResized(){
-//   if (game.mode === "play")
-//     viewport.update(true)
-// }
+function windowResized(){
+  if (game.mode === "play")
+    viewport.update(true)
+}

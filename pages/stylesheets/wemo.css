@@ -23,7 +23,7 @@ body {
   list-style: none;
 }
         /* ----------------------- Sidebar/Topbar: --------------------*/
-        
+/*        
 .topbar {
   position: fixed;
   top: 0;
@@ -32,7 +32,7 @@ body {
   width: 100%;
   background-color: #e0ffe0;
   z-index: 1;
-}
+}*/
 
 .sidebar {
   position: fixed;
@@ -64,40 +64,51 @@ body {
 .tilebox {
   display: flex;
   flex-wrap: wrap;
-  width: 372px;
 }
 
-.tilebox-short {
+.editbar {
+  position: fixed;
   display: flex;
-  flex-wrap: wrap;
-  width: 217px;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100px;
+  padding: 3px;
+  background-color: #e0ffe0;
+  z-index: 1;
 }
 
-.side-buttons {
-  float: left;
-  width: 75px;
-  height: 98px;
-  border-bottom: 2px solid #aaa;
+.editbar-top{
+  margin-bottom: 8px;
 }
+
+.editbar-bottom {
+  overflow: scroll;
+}
+
+.menu-buttons {
+  margin-bottom: 4px;
+  display: flex;
+}
+
 .menu {
   text-align: center;
   background-color: #eee;
   border: solid #aaa;
   border-width: 0 2px 1px 0;
   padding: 4px;
-  height: 24px;
-  width: 65px;
   cursor: pointer;
+  flex-grow: 1;
 }
 
 .menu-content {
   display: none;
   position: absolute;
   top: 0px;
-  left: 75px;
+  left: 103px;
   width: 261px;
-  border-right: 2px solid #aaa;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-right: 1px solid #fff;
   z-index: 2;
 }
 
@@ -127,6 +138,22 @@ body {
   flex-wrap: wrap;
 }
 
+.layer-buttons{
+  width: 65px;
+  float: left;
+  border: solid 2px #ccc;
+  cursor: pointer; 
+}
+
+.layer-button{
+  display: block;
+  padding: 3px 5px;
+  background-color: #ddd;
+}
+
+.activelayer {
+  background-color: #999;
+}
         /* ------------------------------- Welcome screen: -----------------------*/
 
 .button-tiles {

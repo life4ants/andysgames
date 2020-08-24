@@ -237,13 +237,11 @@ class Board {
   }
 
   clicker(){
-    let y = Math.floor((mouseY-topbarHeight)/25)
-    let x = Math.floor(mouseX/25)
-    let cell = cells[x][y]
-    if (cell.type === "campsite"){
-      popup.grabMenu("info", cell.id)
+    if(Gclick){
+      let y = Math.floor((mouseY-Goffset)/TILESIZE)
+      let x = Math.floor(mouseX/TILESIZE)
+      console.table(cells[x][y])
     }
-    console.log(cell)
   }
 
   showNight(){

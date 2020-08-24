@@ -1,12 +1,32 @@
 console.timeLog("main", "loading main")
 const TILESIZE = 32
-var Goffset = 55 //height of topbar except in edit mode, then 0\
+var Goffset = 0 //height of topbar except in edit mode, then 0\
+var Gtiles = {}
+var cells = []
+var Gclick = true
 var GtileList = [
   null,
-  "bedrock", 
+  "bedrock",
+  "cross",
   "dirt", 
+  "eraser",
+  "floodFill",
   "freshwater", 
   "grass",
+  "grass1",
+  "grass2",
+  "grass3",
+  "grass4",
+  "grass5",
+  "grass6",
+  "grass7",
+  "grass8",
+  "grass9",
+  "grass10",
+  "grass11",
+  "grass12",
+  "grassX",
+  "hillX", 
   "hill1", 
   "hill2", 
   "hill3",
@@ -22,6 +42,10 @@ var GtileList = [
   "hill13", 
   "hill14", 
   "hill15",
+  "hill16",
+  "hill17",
+  "hill18",
+  "hill19",
   "saltwater", 
   "sand"      
   ]
@@ -30,8 +54,6 @@ var Gsounds = {
   "pit":     null, "sleep":   null, "vomit":    null,
   "walk1":   null, "walk2":   null
 }
-var Gtiles = {}
-var cells = []
 
 async function loader(){
   var c = 1
@@ -56,8 +78,6 @@ function setup(){
   Gcanvas.parent("loading")
   // $("#board").css("top", world.topOffset).css("left", world.leftOffset)
   strokeJoin(ROUND)
-  // noLoop()
-  frameRate(12)
 }
 
 function draw(){
@@ -70,8 +90,11 @@ function draw(){
     text("ready to play!", 50,10)
   }
   else if (game.mode === "edit") {
-    background('green')
-    board.display()
+    if (frameCount % 4 == 0){
+      background('green')
+      board.display()
+    }
+    editor.showMouse()
   }
 }
 
