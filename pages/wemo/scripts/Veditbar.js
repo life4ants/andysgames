@@ -58,6 +58,31 @@ const editbar = {
       layer2: [
         { id: "grass",   auto: true,  src: "wemo/img_tiles/grassX.png"},
         { id: "hill",    auto: true,  src: "wemo/img_tiles/hillX.png"},
+        { id: "sand",    auto: true,  src: "wemo/img_tiles/sandX.png"},
+        { id: "grass1",  auto: false, src: "wemo/img_tiles/grass1.png"},
+        { id: "grass2",  auto: false, src: "wemo/img_tiles/grass2.png"},
+        { id: "grass3",  auto: false, src: "wemo/img_tiles/grass3.png"},
+        { id: "grass4",  auto: false, src: "wemo/img_tiles/grass4.png"},
+        { id: "grass5",  auto: false, src: "wemo/img_tiles/grass5.png"},
+        { id: "grass6",  auto: false, src: "wemo/img_tiles/grass6.png"},
+        { id: "grass7",  auto: false, src: "wemo/img_tiles/grass7.png"},
+        { id: "grass8",  auto: false, src: "wemo/img_tiles/grass8.png"},
+        { id: "grass9",  auto: false, src: "wemo/img_tiles/grass9.png"},
+        { id: "grass10", auto: false, src: "wemo/img_tiles/grass10.png"},
+        { id: "grass11", auto: false, src: "wemo/img_tiles/grass11.png"},
+        { id: "grass12", auto: false, src: "wemo/img_tiles/grass12.png"},
+        { id: "sand1",   auto: false, src: "wemo/img_tiles/sand1.png"},
+        { id: "sand2",   auto: false, src: "wemo/img_tiles/sand2.png"},
+        { id: "sand3",   auto: false, src: "wemo/img_tiles/sand3.png"},
+        { id: "sand4",   auto: false, src: "wemo/img_tiles/sand4.png"},
+        { id: "sand5",   auto: false, src: "wemo/img_tiles/sand5.png"},
+        { id: "sand6",   auto: false, src: "wemo/img_tiles/sand6.png"},
+        { id: "sand7",   auto: false, src: "wemo/img_tiles/sand7.png"},
+        { id: "sand8",   auto: false, src: "wemo/img_tiles/sand8.png"},
+        { id: "sand9",   auto: false, src: "wemo/img_tiles/sand9.png"},
+        { id: "sand10",  auto: false, src: "wemo/img_tiles/sand10.png"},
+        { id: "sand11",  auto: false, src: "wemo/img_tiles/sand11.png"},
+        { id: "sand12",  auto: false, src: "wemo/img_tiles/sand12.png"},
         { id: "hill1",   auto: false, src: "wemo/img_tiles/hill1.png"},
         { id: "hill2",   auto: false, src: "wemo/img_tiles/hill2.png"},
         { id: "hill3",   auto: false, src: "wemo/img_tiles/hill3.png"},
@@ -77,18 +102,7 @@ const editbar = {
         { id: "hill17",  auto: false, src: "wemo/img_tiles/hill17.png"},
         { id: "hill18",  auto: false, src: "wemo/img_tiles/hill18.png"},
         { id: "hill19",  auto: false, src: "wemo/img_tiles/hill19.png"},
-        { id: "grass1",  auto: false, src: "wemo/img_tiles/grass1.png"},
-        { id: "grass2",  auto: false, src: "wemo/img_tiles/grass2.png"},
-        { id: "grass3",  auto: false, src: "wemo/img_tiles/grass3.png"},
-        { id: "grass4",  auto: false, src: "wemo/img_tiles/grass4.png"},
-        { id: "grass5",  auto: false, src: "wemo/img_tiles/grass5.png"},
-        { id: "grass6",  auto: false, src: "wemo/img_tiles/grass6.png"},
-        { id: "grass7",  auto: false, src: "wemo/img_tiles/grass7.png"},
-        { id: "grass8",  auto: false, src: "wemo/img_tiles/grass8.png"},
-        { id: "grass9",  auto: false, src: "wemo/img_tiles/grass9.png"},
-        { id: "grass10", auto: false, src: "wemo/img_tiles/grass10.png"},
-        { id: "grass11", auto: false, src: "wemo/img_tiles/grass11.png"},
-        { id: "grass12", auto: false, src: "wemo/img_tiles/grass12.png"}
+        { id: "ramp",    auto: false, src: "wemo/img_tiles/ramp.png"},
       ],
       tools: [
         { id: "eraser",    src: "wemo/img_tiles/eraser.png"},
@@ -136,7 +150,7 @@ const editbar = {
       if (cols != cols || rows != rows)
         alert("Please enter 2 numbers separated by a coma (\",\")")
       else
-        editor.newWorld(cols,rows, "random")
+        editor.newWorld(cols,rows)
     },
 
     previewBoard(){
@@ -148,7 +162,7 @@ const editbar = {
     },
 
     island(){
-      editor.newWorld(board.cols, board.rows, "water")
+      editor.newWorld(board.cols, board.rows)
       editor.islandMaker(board.cols, board.rows)
       editor.floodFill(8,8,cells[8][8].tile,cells[8][8].type,"random","random")
     },

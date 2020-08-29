@@ -100,9 +100,9 @@ let editor = {
     }
   },
 
-  newWorld(cols, rows, fillType){
-    board = new Board(cols, rows, fillType)
-    world.resize(cols, rows)
+  newWorld(cols, rows){
+    board = new Board(cols, rows)
+    game.resize(cols, rows)
   },
 
   treeFill(){
