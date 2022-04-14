@@ -6,10 +6,6 @@
     <link rel="shortcut icon" href="images/wemo.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/skeleton.css">
-    <link rel="stylesheet" type="text/css" href="/stylesheets/wemo.css">
-    <script type="text/javascript">
-      console.time("main")
-    </script>
   </head>
 <body>
   <div class="welcome">
@@ -27,7 +23,7 @@
   <div class="welcome welcome-text">
     <div>
       <h4>About Wemo</h4>
-      <p>Wemo was concived in 2017, and has evolved a lot from the original idea. I worked on it for about 4 months and then set it aside. Now in August 2020 I am attempting to finish some of the ideas we had for it all along.</p>
+      <p>Wemo is a survial/exploration game. Its unique features are uncovering clouds and having to survive the night. I built most of it in fall 2017, and have added a few things since then.</p>
       <h5>How to Play</h5>
       <p>Use the arrow keys to move the man around and uncover the world.</p>
       <p>Use the following keys to do specific actions:</p>
@@ -44,30 +40,9 @@
         <li>X: center the screen on the man</li>
       </ul>
     </div>
-    <button class="button-primary space"
-      onclick = "window.location.href='http://andrewdbuck.com/wemoexplorer';" 
-    >Play version one</button>
-    <button class="button-primary space"
-      onclick="game.edit()">
-      Build your own worlds
-    </button>
-    <div id="loading"></div>
+    <button class="play-button"
+      onclick = "window.location.href='http://life4ants.github.io/wemoexplorer';" 
+    >Click here to play!</button>
   </div>
-  <div id="game"></div>
-  <div id="board"></div>
-  <div id="popup"></div>
 </body>
-  <script src="wemo/lib/vue2.2.10.js"></script>
-  <script src="wemo/lib/p5.min.js"></script>
-  <script src="wemo/lib/jquery-3.1.1.min.js"></script>
-  <script src="wemo/scripts/Veditbar.js"></script>
-  <script src="wemo/scripts/Vgame.js"></script>
-  <script src="wemo/scripts/main.js"></script>
-  <script src="wemo/scripts/cell.js"></script>
-  <script src="wemo/scripts/drawer.js"></script>
-  <script src="wemo/scripts/editor.js"></script>
-  <script src="wemo/scripts/viewport.js"></script>
-  <script src="wemo/scripts/board.js"></script>
-  <script src="wemo/scripts/keyPress.js"></script>
-
 </html>

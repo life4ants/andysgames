@@ -94,3 +94,18 @@ img.tag {
   margin: 5px;
 }
 
+.welcome-text {
+  columns: 200px 2;
+  padding: 15px;
+}
+.welcome-text ul{
+  margin: 10px;
+  list-style: none;
+}
+
+.play-button{
+  font-size: 18px;
+  border: solid #000 1px;
+  color: #444;
+  background-color: orange;
+}
