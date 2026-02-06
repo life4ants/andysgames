@@ -6,7 +6,7 @@ const app = express();
 app.use(express.static('pages'))
 
 app.get('/wemoexplorer', function (req, res) {
-    res.sendFile(__dirname+'/pages/wemo/wemo.html');
+    res.sendFile(__dirname+'/pages/wemo/index.html');
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     console.log(ip+" requested wemo");
 });
