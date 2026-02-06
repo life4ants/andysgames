@@ -3,6 +3,10 @@ body{
   background-color: green;
 }
 
+.view_count {
+  float: right;
+  font-size: 10px;
+}
 
 #logo {
   width: 80px;
