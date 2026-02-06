@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 5050
 const app = express();
 
 app.use(express.static('pages'))
+app.use("/wemoexplorer", express.static("pages/wemo"));
 
 app.get('/wemoexplorer', function (req, res) {
     res.sendFile(__dirname+'/pages/wemo/index.html');
