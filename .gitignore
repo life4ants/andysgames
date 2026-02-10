@@ -9,3 +9,6 @@ package-lock.json
 *.dev
 .DS_Store
 other_imgs
+
+data/
+db.js

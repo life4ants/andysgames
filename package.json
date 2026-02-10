@@ -2,10 +2,10 @@
   "name": "andysgames",
   "version": "1.0.0",
   "description": "A website to host all my games",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "npx nodemon index.js"
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
   },
   "author": "Andy Buck",
   "license": "MIT",
@@ -17,7 +17,8 @@
     "ext": "html, css, js"
   },
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "nodeman": "^1.1.2"

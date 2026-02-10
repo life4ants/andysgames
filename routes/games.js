@@ -1,0 +1,313 @@
+// routes/games.js
+const express = require('express');
+const router = express.Router();
+
+const {
+  run,
+  get,
+  all,
+  insertGameSession,
+  getUserGameSessions,
+  getUserTotalPlayTime,
+  upsertUser,           // optional – to make sure user exists
+  getUser
+} = require('../db');   // adjust path if your db.js is in a different location
+
+// ────────────────────────────────────────────────
+// POST /api/games
+// ────────────────────────────────────────────────
+// Called by the frontend when a game session ends (death, level complete, quit, etc.)
+// routes/games.js   →  POST handler
+// routes/games.js
+
+router.post('/', async (req, res) => {
+  const {
+    userId,
+    sessionId,
+    status,
+    level,
+    game_time,
+    game_name,
+    name,        // only on first sync
+    createdAt    // only on first sync
+  } = req.body;
+
+  // ────────────────────────────────────────────────
+  // Validation
+  // ────────────────────────────────────────────────
+  if (!userId || typeof userId !== 'string') {
+    return res.status(400).json({
+      success: false,
+      error: 'userId is required and must be a string'
+    });
+  }
+
+  if (!sessionId || typeof sessionId !== 'string') {
+    return res.status(400).json({
+      success: false,
+      error: 'sessionId is required and must be a string'
+    });
+  }
+
+  if (!status || typeof status !== 'string') {
+    return res.status(400).json({
+      success: false,
+      error: 'status is required and must be a string'
+    });
+  }
+
+  if (typeof level !== 'number' || level < 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'level must be a non-negative number'
+    });
+  }
+
+  if (typeof game_time !== 'number' || game_time < 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'game_time must be a non-negative number (seconds)'
+    });
+  }
+
+  // game_name is optional → can be empty string or null
+  const safeGameName = typeof game_name === 'string' ? game_name.trim().slice(0, 100) : null;
+
+  try {
+    let userAction = 'existing';
+    let createdUser = false;
+
+    // ────────────────────────────────────────────────
+    // First-time user creation (client sends createdAt)
+    // ────────────────────────────────────────────────
+    if (createdAt) {
+      if (typeof createdAt !== 'string') {
+        return res.status(400).json({ success: false, error: 'createdAt must be a string' });
+      }
+      const result = await upsertUser(userId, name, createdAt);
+
+      if (result.action === 'created') {
+        console.log(`New user created: ${userId} (${name || 'Anonymous'})`);
+      }
+    } else {
+      // Normal request → touch lastPlayed
+      await run(
+        'UPDATE users SET lastPlayed = CURRENT_TIMESTAMP WHERE userId = ?',
+        [userId]
+      );
+    }
+
+    // ────────────────────────────────────────────────
+    // Find or create game session by sessionId
+    // ────────────────────────────────────────────────
+    let gameRecord = await get(
+      'SELECT * FROM games WHERE sessionId = ?',
+      [sessionId]
+    );
+
+    if (gameRecord) {
+      // Update existing
+      await run(
+        `UPDATE games 
+         SET level = ?, game_time = ?, status = ?, game_name = ?, played_at = CURRENT_TIMESTAMP
+         WHERE sessionId = ?`,
+        [level, game_time, status, safeGameName, sessionId]
+      );
+      console.log(`Updated game session ${sessionId} (game_name: ${safeGameName || 'none'})`);
+    } else {
+      // Create new
+      await run(
+        `INSERT INTO games (userId, sessionId, level, game_time, status, game_name)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [userId, sessionId, level, game_time, status, safeGameName]
+      );
+      console.log(`Created game session ${sessionId} (game_name: ${safeGameName || 'none'})`);
+    }
+
+    // Response – include game_name
+    res.status(gameRecord ? 200 : 201).json({
+      success: true,
+      message: gameRecord ? 'Session updated' : 'Session created',
+      sessionId,
+      game_name: safeGameName || null,
+      level,
+      game_time,
+      status
+    });
+
+  } catch (err) {
+    console.error('POST /api/games error:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to save game session' });
+  }
+});
+// ────────────────────────────────────────────────
+// GET /api/games/:userId --> not used yet
+// ────────────────────────────────────────────────
+// Get recent game sessions for a user (for history / profile page)
+router.get('/user/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const limit = parseInt(req.query.limit) || 20; // ?limit=50
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
+  }
+
+  try {
+    const sessions = await getUserGameSessions(userId, limit);
+
+    res.json({
+      userId,
+      sessions,
+      count: sessions.length
+    });
+  } catch (err) {
+    console.error('Error fetching game sessions:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// ────────────────────────────────────────────────
+// GET /api/games/user/:userId/total-time --> not used yet
+// ────────────────────────────────────────────────
+// Useful for showing total playtime on a profile or leaderboard
+router.get('/user/:userId/total-time', async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
+  }
+
+  try {
+    const totalSeconds = await getUserTotalPlayTime(userId);
+
+    res.json({
+      userId,
+      total_play_time_seconds: totalSeconds,
+      total_play_time_readable: formatSeconds(totalSeconds)
+    });
+  } catch (err) {
+    console.error('Error calculating total play time:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// GET /api/games/all  → returns all game sessions
+router.get('/all', async (req, res) => {
+  try {
+    const games = await all(
+      `SELECT 
+         g.id, g.userId, g.sessionId, g.level, g.game_time, g.status, g.played_at,
+         u.name AS player_name
+       FROM games g
+       LEFT JOIN users u ON g.userId = u.userId
+       ORDER BY g.level ASC`
+    );
+
+    res.json({
+      success: true,
+      count: games.length,
+      games
+    });
+    console.log("sent all games")
+  } catch (err) {
+    console.error('Error fetching all games:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch games'
+    });
+  }
+});
+
+// GET /api/games/highscores
+// Returns top 10 fastest games per level
+router.get('/highscores', async (req, res) => {
+  const limitPerLevel = parseInt(req.query.limit) || 10;
+  
+  // Limit to reasonable values (avoid performance issues)
+  const safeLimit = Math.max(1, Math.min(20, limitPerLevel));
+
+  try {
+    // This query:
+    // - Gets only completed games
+    // - Joins with users for player name
+    // - Uses window function (ROW_NUMBER) to rank within each level
+    // - Keeps only the top N per level
+    const highScores = await all(`
+      WITH ranked_games AS (
+        SELECT 
+          g.id,
+          g.userId,
+          g.sessionId,
+          g.level,
+          g.game_time,
+          g.status,
+          g.played_at,
+          u.name AS player_name,
+          ROW_NUMBER() OVER (
+            PARTITION BY g.level 
+            ORDER BY g.game_time ASC, g.played_at ASC
+          ) AS rank
+        FROM games g
+        LEFT JOIN users u ON g.userId = u.userId
+        WHERE g.status = 'completed'
+      )
+      SELECT 
+        id,
+        userId,
+        sessionId,
+        level,
+        game_time,
+        played_at,
+        player_name,
+        rank
+      FROM ranked_games
+      WHERE rank <= ?
+      ORDER BY level ASC, rank ASC
+    `, [safeLimit]);
+
+    // Group by level for nicer response (optional but recommended)
+    const groupedByLevel = {};
+    
+    highScores.forEach(row => {
+      if (!groupedByLevel[row.level]) {
+        groupedByLevel[row.level] = [];
+      }
+      groupedByLevel[row.level].push({
+        rank: row.rank,
+        userId: row.userId,
+        player_name: row.player_name || 'Anonymous',
+        game_time: row.game_time,
+        played_at: row.played_at,
+        sessionId: row.sessionId
+      });
+    });
+
+    res.json({
+      success: true,
+      limit_per_level: safeLimit,
+      total_records: highScores.length,
+      highscores: groupedByLevel
+    });
+    console.log("sent high scores")
+  } catch (err) {
+    console.error('Error fetching highscores:', err.message);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to load high scores'
+    });
+  }
+});
+
+// Simple helper to format seconds → human readable (optional)
+function formatSeconds(seconds) {
+  if (!seconds) return '0s';
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+
+  if (hrs > 0) return `${hrs}h ${mins}m ${secs}s`;
+  if (mins > 0) return `${mins}m ${secs}s`;
+  return `${secs}s`;
+}
+
+module.exports = router;
