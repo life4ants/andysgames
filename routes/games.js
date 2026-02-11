@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
     level,
     game_time,
     game_name,
+    isMobile,
     name,        // only on first sync
     createdAt    // only on first sync
   } = req.body;
@@ -109,17 +110,17 @@ router.post('/', async (req, res) => {
       // Update existing
       await run(
         `UPDATE games 
-         SET level = ?, game_time = ?, status = ?, game_name = ?, played_at = CURRENT_TIMESTAMP
+         SET level = ?, game_time = ?, status = ?, game_name = ?, isMobile = ?, played_at = CURRENT_TIMESTAMP
          WHERE sessionId = ?`,
-        [level, game_time, status, safeGameName, sessionId]
+        [level, game_time, status, safeGameName, isMobile ? 1 : 0, sessionId]
       );
       console.log(`Updated game session ${sessionId} (game_name: ${safeGameName || 'none'})`);
     } else {
       // Create new
       await run(
-        `INSERT INTO games (userId, sessionId, level, game_time, status, game_name)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [userId, sessionId, level, game_time, status, safeGameName]
+        `INSERT INTO games (userId, sessionId, level, game_time, status, game_name, isMobile)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [userId, sessionId, level, game_time, status, safeGameName, isMobile ? 1 : 0]
       );
       console.log(`Created game session ${sessionId} (game_name: ${safeGameName || 'none'})`);
     }
@@ -196,7 +197,7 @@ router.get('/all', async (req, res) => {
   try {
     const games = await all(
       `SELECT 
-         g.id, g.userId, g.sessionId, g.level, g.game_time, g.status, g.played_at,
+         g.id, g.userId, g.sessionId, g.level, g.game_time, g.status, g.played_at, g.isMobile,
          u.name AS player_name
        FROM games g
        LEFT JOIN users u ON g.userId = u.userId
@@ -219,22 +220,23 @@ router.get('/all', async (req, res) => {
 });
 
 // GET /api/games/highscores
-// Returns top 10 fastest games per level
+// GET /api/games/highscores?level=0
 router.get('/highscores', async (req, res) => {
-  const limitPerLevel = parseInt(req.query.limit) || 10;
-  
-  // Limit to reasonable values (avoid performance issues)
-  const safeLimit = Math.max(1, Math.min(20, limitPerLevel));
+  // Get requested level (optional – if missing → return all levels)
+  const requestedLevel = req.query.level ? parseInt(req.query.level, 10) : null;
+
+  // Validate level (if provided)
+  if (requestedLevel !== null && (isNaN(requestedLevel) || requestedLevel < 0)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid level parameter'
+    });
+  }
 
   try {
-    // This query:
-    // - Gets only completed games
-    // - Joins with users for player name
-    // - Uses window function (ROW_NUMBER) to rank within each level
-    // - Keeps only the top N per level
-    const highScores = await all(`
+    let query = `
       WITH ranked_games AS (
-        SELECT 
+        SELECT
           g.id,
           g.userId,
           g.sessionId,
@@ -242,53 +244,57 @@ router.get('/highscores', async (req, res) => {
           g.game_time,
           g.status,
           g.played_at,
+          g.isMobile,
           u.name AS player_name,
           ROW_NUMBER() OVER (
-            PARTITION BY g.level 
+            PARTITION BY g.level
             ORDER BY g.game_time ASC, g.played_at ASC
           ) AS rank
         FROM games g
         LEFT JOIN users u ON g.userId = u.userId
         WHERE g.status = 'completed'
+    `;
+
+    const params = [];
+
+    // If specific level requested → add filter
+    if (requestedLevel !== null) {
+      query += ` AND g.level = ?`;
+      params.push(requestedLevel);
+    }
+
+    query += `
       )
-      SELECT 
+      SELECT
         id,
-        userId,
-        sessionId,
         level,
         game_time,
         played_at,
         player_name,
-        rank
+        rank,
+        isMobile
       FROM ranked_games
-      WHERE rank <= ?
+      WHERE rank <= 10
       ORDER BY level ASC, rank ASC
-    `, [safeLimit]);
+    `;
 
-    // Group by level for nicer response (optional but recommended)
-    const groupedByLevel = {};
-    
+    const highScores = await all(query, params);
+
+    // Optional: group by level in response
+    const grouped = {};
     highScores.forEach(row => {
-      if (!groupedByLevel[row.level]) {
-        groupedByLevel[row.level] = [];
-      }
-      groupedByLevel[row.level].push({
-        rank: row.rank,
-        userId: row.userId,
-        player_name: row.player_name || 'Anonymous',
-        game_time: row.game_time,
-        played_at: row.played_at,
-        sessionId: row.sessionId
-      });
+      if (!grouped[row.level]) grouped[row.level] = [];
+      grouped[row.level].push(row);
     });
 
     res.json({
       success: true,
-      limit_per_level: safeLimit,
+      requested_level: requestedLevel ?? 'all',
       total_records: highScores.length,
-      highscores: groupedByLevel
+      highscores: grouped
     });
-    console.log("sent high scores")
+
+    console.log(`Highscores served – ${highScores.length} records`);
   } catch (err) {
     console.error('Error fetching highscores:', err.message);
     res.status(500).json({
