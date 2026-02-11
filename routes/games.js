@@ -142,7 +142,7 @@ router.post('/', async (req, res) => {
   }
 });
 // ────────────────────────────────────────────────
-// GET /api/games/:userId --> not used yet
+// GET /api/games/user/:userId --> not used yet
 // ────────────────────────────────────────────────
 // Get recent game sessions for a user (for history / profile page)
 router.get('/user/:userId', async (req, res) => {
@@ -197,7 +197,7 @@ router.get('/all', async (req, res) => {
   try {
     const games = await all(
       `SELECT 
-         g.id, g.userId, g.sessionId, g.level, g.game_time, g.status, g.played_at, g.isMobile,
+         g.id, g.userId, g.game_name, g.level, g.game_time, g.status, g.played_at, g.isMobile,
          u.name AS player_name
        FROM games g
        LEFT JOIN users u ON g.userId = u.userId
