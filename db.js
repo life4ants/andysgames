@@ -22,7 +22,7 @@ db.serialize(() => {
       id         INTEGER PRIMARY KEY AUTOINCREMENT,
       userId     TEXT    UNIQUE NOT NULL,
       name       TEXT,
-      createdAt  DATETIME DEFAULT CURRENT_TIMESTAMP,
+      createdAt  DATETIME,
       lastPlayed DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -88,19 +88,19 @@ function all(sql, params = []) {
 }
 
 // User helpers
-async function upsertUser(userId, name = null) {
+async function upsertUser(userId, player_name, createdAt) {
   const existing = await get('SELECT * FROM users WHERE userId = ?', [userId]);
 
   if (existing) {
     await run(
       'UPDATE users SET lastPlayed = CURRENT_TIMESTAMP, name = ? WHERE userId = ?',
-      [name || existing.name, userId]
+      [player_name || existing.name, userId]
     );
     return { action: 'updated', userId };
   } else {
     await run(
-      'INSERT INTO users (userId, name) VALUES (?, ?)',
-      [userId, name || 'Anonymous']
+      'INSERT INTO users (userId, name, createdAt) VALUES (?, ?, ?)',
+      [userId, player_name, createdAt]
     );
     return { action: 'created', userId };
   }

@@ -1,4 +1,3 @@
-// routes/games.js
 const express = require('express');
 const router = express.Router();
 
@@ -16,9 +15,7 @@ const {
 // ────────────────────────────────────────────────
 // POST /api/games
 // ────────────────────────────────────────────────
-// Called by the frontend when a game session ends (death, level complete, quit, etc.)
-// routes/games.js   →  POST handler
-// routes/games.js
+// Called by game.postGame
 
 router.post('/', async (req, res) => {
   const {
@@ -29,7 +26,7 @@ router.post('/', async (req, res) => {
     game_time,
     game_name,
     isMobile,
-    name,        // only on first sync
+    player_name,        // only on first sync
     createdAt    // only on first sync
   } = req.body;
 
@@ -71,8 +68,8 @@ router.post('/', async (req, res) => {
     });
   }
 
-  // game_name is optional → can be empty string or null
-  const safeGameName = typeof game_name === 'string' ? game_name.trim().slice(0, 100) : null;
+  const safeGameName = typeof game_name === 'string' ? game_name.trim().slice(0, 25) : null;
+  const safePlayerName = typeof player_name === 'string' ? player_name.trim().slice(0, 25) : null;
 
   try {
     let userAction = 'existing';
@@ -85,10 +82,10 @@ router.post('/', async (req, res) => {
       if (typeof createdAt !== 'string') {
         return res.status(400).json({ success: false, error: 'createdAt must be a string' });
       }
-      const result = await upsertUser(userId, name, createdAt);
+      const result = await upsertUser(userId, safePlayerName, createdAt);
 
       if (result.action === 'created') {
-        console.log(`New user created: ${userId} (${name || 'Anonymous'})`);
+        console.log(`New user created: ${userId} (${safePlayerName})`);
       }
     } else {
       // Normal request → touch lastPlayed
@@ -110,9 +107,9 @@ router.post('/', async (req, res) => {
       // Update existing
       await run(
         `UPDATE games 
-         SET level = ?, game_time = ?, status = ?, game_name = ?, isMobile = ?, played_at = CURRENT_TIMESTAMP
+         SET game_time = ?, status = ?, played_at = CURRENT_TIMESTAMP
          WHERE sessionId = ?`,
-        [level, game_time, status, safeGameName, isMobile ? 1 : 0, sessionId]
+        [game_time, status, sessionId]
       );
       console.log(`Updated game session ${sessionId} (game_name: ${safeGameName || 'none'})`);
     } else {

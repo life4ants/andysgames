@@ -13,30 +13,30 @@ const {
 // POST /api/users
 // ────────────────────────────────────────────────
 // Create or update a user (called on first stats send or profile update)
-router.post('/', async (req, res) => {
-  const { userId, name } = req.body;
+// router.post('/', async (req, res) => {
+//   const { userId, name } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ error: 'userId is required' });
-  }
+//   if (!userId) {
+//     return res.status(400).json({ error: 'userId is required' });
+//   }
 
-  // Optional: basic sanitization / length check
-  const safeName = name && name.trim().slice(0, 50) || null;
+//   // Optional: basic sanitization / length check
+//   const safeName = name && name.trim().slice(0, 50) || null;
 
-  try {
-    const result = await upsertUser(userId, safeName);
+//   try {
+//     const result = await upsertUser(userId, safeName, Date.now());
 
-    res.status(result.action === 'created' ? 201 : 200).json({
-      success: true,
-      action: result.action,
-      userId,
-      name: safeName || 'Anonymous'
-    });
-  } catch (err) {
-    console.error('Error upserting user:', err);
-    res.status(500).json({ error: 'Failed to save user' });
-  }
-});
+//     res.status(result.action === 'created' ? 201 : 200).json({
+//       success: true,
+//       action: result.action,
+//       userId,
+//       name: safeName || 'Anonymous'
+//     });
+//   } catch (err) {
+//     console.error('Error upserting user:', err);
+//     res.status(500).json({ error: 'Failed to save user' });
+//   }
+// });
 
 // GET /api/users/
 router.get('/', async (req, res) => {
