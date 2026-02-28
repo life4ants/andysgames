@@ -198,7 +198,7 @@ router.get('/all', async (req, res) => {
          u.name AS player_name
        FROM games g
        LEFT JOIN users u ON g.userId = u.userId
-       ORDER BY g.level ASC`
+       ORDER BY g.played_at DESC`
     );
 
     res.json({
