@@ -43,11 +43,28 @@ db.serialize(() => {
       )
   `);
 
+  // Errors table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS errors (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId     TEXT,
+      message    TEXT    NOT NULL,
+      source     TEXT,
+      lineno     INTEGER,
+      colno      INTEGER,
+      stack      TEXT,
+      url        TEXT,
+      userAgent  TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Indexes for faster queries
   db.run(`CREATE INDEX IF NOT EXISTS idx_users_userId ON users(userId)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_games_userId ON games(userId)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_games_played_at ON games(played_at)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_games_sessionId ON games(sessionId)`);
+  db.run(`CREATE INDEX IF NOT EXISTS idx_errors_created_at ON errors(created_at)`);
 });
 
 // Promise-based helpers
@@ -144,6 +161,25 @@ async function getUserTotalPlayTime(userId) {
   return row?.total_time || 0;
 }
 
+// Error helpers
+async function insertError({ userId, message, source, lineno, colno, stack, url, userAgent }) {
+  return run(
+    `INSERT INTO errors (userId, message, source, lineno, colno, stack, url, userAgent)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [userId || null, message, source || null, lineno || null, colno || null, stack || null, url || null, userAgent || null]
+  );
+}
+
+async function getErrors(limit = 100) {
+  return all(
+    `SELECT e.*, u.name AS player_name
+     FROM errors e
+     LEFT JOIN users u ON e.userId = u.userId
+     ORDER BY e.created_at DESC LIMIT ?`,
+    [limit]
+  );
+}
+
 // Export everything useful
 module.exports = {
   run,
@@ -154,6 +190,6 @@ module.exports = {
   insertGameSession,
   getUserGameSessions,
   getUserTotalPlayTime,
-  // If you ever need direct access (rarely recommended)
-  // db,
+  insertError,
+  getErrors,
 };

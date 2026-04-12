@@ -17,12 +17,18 @@ app.get('/matchgame', (req, res) => {
     res.sendFile(__dirname+'/pages/matchgame/matchgame.html');
 });
 
+app.get('/errors', (req, res) => {
+    res.sendFile(__dirname+'/pages/errors.html');
+});
+
 const gamesRouter = require('./routes/games');
-const usersRouter = require('./routes/users'); 
+const usersRouter = require('./routes/users');
+const errorsRouter = require('./routes/errors');
 app.use(express.json());               // Required for parsing JSON POST bodies
 
 app.use('/api/users', usersRouter);
 app.use('/api/games', gamesRouter);
+app.use('/api/errors', errorsRouter);
 
 app.listen(PORT, () => 
     console.log(`${new Date().toLocaleTimeString()}: Listening on ${ PORT }`)
